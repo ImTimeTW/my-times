@@ -1,69 +1,93 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>投稿你的故事 💌 | 小時光心靈雜貨舖</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>投稿你的故事 ✍️</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #fff8e1; color: #5d4037; margin: 0; padding: 0; }
-    header, footer { background-color: #ffcc80; text-align: center; padding: 20px; font-weight: bold; }
-    nav { background-color: #ffe0b2; text-align: center; padding: 15px; }
-    nav a { margin: 0 15px; text-decoration: none; font-size: 18px; color: #d84315; }
-    .container { max-width: 700px; margin: 30px auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 20px; font-size: 18px; font-weight: bold; }
-    input, textarea { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; margin-top: 8px; }
-    button { margin-top: 25px; padding: 15px 30px; background-color: #ff7043; color: white; font-size: 18px; border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
-    button:hover { background-color: #e64a19; }
-    .thanks, .error { display: none; text-align: center; font-size: 20px; margin-top: 30px; }
-    .thanks { color: #388e3c; }
-    .error { color: #c62828; }
+    body {
+      background-color: #fff8e1;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      color: #5d4037;
+    }
+    h2 {
+      text-align: center;
+      color: #d84315;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff3e0;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #ff7043;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e64a19;
+    }
+    .msg {
+      text-align: center;
+      font-size: 16px;
+      margin-top: 20px;
+      color: green;
+    }
   </style>
 </head>
 <body>
-  <header>💌 投稿你的故事 | 小時光心靈雜貨舖</header>
-  <nav>
-    <a href="index.html">首頁</a>
-    <a href="shopee.html">蝦皮商場</a>
-    <a href="form.html">投稿你的故事</a>
-  </nav>
-  <div class="container">
-    <form id="storyForm" action="https://script.google.com/macros/s/AKfycbwxmtxORq2bD7s8AXeu7D2IIBOjwp9_Thmi54eIO-G_sDUnNqCcQPTAAXBVkv-6uUpJ/exec" method="POST">
-      <label for="name">暱稱（可不填）</label>
-      <input type="text" name="name" id="name" placeholder="小熊、迷路的貓咪...">
-      <label for="contact">聯絡方式（LINE ID 或 Email）</label>
-      <input type="text" name="contact" id="contact" required>
-      <label for="story">你的故事</label>
-      <textarea name="story" id="story" rows="8" required placeholder="請盡情傾訴你的煩惱、心事或情感經歷..."></textarea>
-      <button type="submit">送出故事 💌</button>
-    </form>
-    <div class="thanks" id="thanksMsg">感謝你的分享，我們會盡快回覆你 💖</div>
-    <div class="error" id="errorMsg">送出失敗，請檢查網路或稍後再試 🙏</div>
-  </div>
-  <footer>© 2025 小時光心靈雜貨舖 | 用心傾聽每一段故事 🌙</footer>
+  <h2>投稿你的故事 💌</h2>
+  <form id="story-form">
+    <label for="name">你的名字（或暱稱）</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="email">聯絡信箱（選填）</label>
+    <input type="email" id="email" name="email" />
+
+    <label for="message">想說的話 / 感情故事</label>
+    <textarea id="message" name="message" rows="6" required></textarea>
+
+    <button type="submit">送出故事 ✨</button>
+    <div class="msg" id="response"></div>
+  </form>
 
   <script>
-    const form = document.getElementById('storyForm');
-    const thanksMsg = document.getElementById('thanksMsg');
-    const errorMsg = document.getElementById('errorMsg');
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwxmtxORq2bD7s8AXeu7D2IIBOjwp9_Thmi54eIO-G_sDUnNqCcQPTAAXBVkv-6uUpJ/exec";
+    const form = document.getElementById("story-form");
+    const responseEl = document.getElementById("response");
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const data = new FormData(form);
-      fetch(form.action, {
-        method: 'POST',
-        body: data
-      }).then(response => {
-        if (response.ok) {
-          form.style.display = 'none';
-          thanksMsg.style.display = 'block';
-        } else {
-          throw new Error('非 200 回應');
-        }
-      }).catch(error => {
-        form.style.display = 'none';
-        errorMsg.style.display = 'block';
-        console.error('提交錯誤：', error);
-      });
+      fetch(scriptURL, { method: "POST", body: new FormData(form)})
+        .then(res => {
+          responseEl.textContent = "✅ 送出成功，謝謝你的分享！";
+          form.reset();
+        })
+        .catch(err => {
+          responseEl.textContent = "❌ 送出失敗，請稍後再試 🙏";
+        });
     });
   </script>
 </body>
